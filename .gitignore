@@ -1,0 +1,6 @@
+# 빌드 결과물과 캐시 (dmgbuild 가상환경 포함)
+.build/
+build/
+
+# macOS
+.DS_Store

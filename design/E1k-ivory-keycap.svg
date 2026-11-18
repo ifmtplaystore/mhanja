@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <title>MHanja 아이콘 – E1 상아 키캡</title>
+  <defs>
+    <!-- 바깥 키캡 윤곽 / 윗면 -->
+    <path id="outer-shape" d="M282,100 H742 A182,182 0 0 1 924,282 V742 A182,182 0 0 1 742,924 H282 A182,182 0 0 1 100,742 V282 A182,182 0 0 1 282,100 Z"/>
+    <path id="face-shape" d="M252,162 H772 A54,54 0 0 1 826,216 V700 A54,54 0 0 1 772,754 H252 A54,54 0 0 1 198,700 V216 A54,54 0 0 1 252,162 Z"/>
+    <clipPath id="clip-outer"><use href="#outer-shape"/></clipPath>
+    <clipPath id="clip-face"><use href="#face-shape"/></clipPath>
+    <filter id="shadow-body" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="17"/><feOffset dy="18" result="b"/>
+      <feFlood flood-color="#3A2E18" flood-opacity="0.32"/><feComposite in2="b" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="shadow-face" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="9"/><feOffset dy="10" result="b"/>
+      <feFlood flood-color="#5A4320" flood-opacity="0.2"/><feComposite in2="b" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="shadow-mark" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/><feOffset dy="2" result="b"/>
+      <feFlood flood-color="#6A1A0E" flood-opacity="0.22"/><feComposite in2="b" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="soften-facets" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="5"/></filter>
+    <linearGradient id="g-bottom-wall" x1="0" y1="754" x2="0" y2="924" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#5A4320" stop-opacity="0.10"/></linearGradient>
+    <radialGradient id="g-corner" cx="924" cy="924" r="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5A4320" stop-opacity="0.10"/><stop offset="1" stop-color="#5A4320" stop-opacity="0"/></radialGradient>
+    <linearGradient id="g-face" x1="0" y1="162" x2="0" y2="754" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F4EEE1"/><stop offset="1" stop-color="#FAF6EC"/></linearGradient>
+    <linearGradient id="g-face-top-shade" x1="0" y1="162" x2="0" y2="282" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6A5430" stop-opacity="0.08"/><stop offset="1" stop-color="#6A5430" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g-gloss" x1="637.6" y1="0" x2="782" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="0.35" stop-color="#FFFFFF" stop-opacity="0.75"/>
+      <stop offset="0.7" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+  </defs>
+
+  <!-- 1. 키캡 바닥 그림자 -->
+  <use id="body-base" href="#outer-shape" fill="#C9BB9C" filter="url(#shadow-body)"/>
+
+  <!-- 2. 경사면 4개 (색을 바꾸면 입체감이 달라짐) -->
+  <g id="walls" clip-path="url(#clip-outer)">
+    <g filter="url(#soften-facets)">
+      <polygon id="wall-top" points="60,60 964,60 810,178 214,178" fill="#F7F1E4"/>
+      <polygon id="wall-left" points="60,60 214,178 214,738 60,964" fill="#ECE2CB"/>
+      <polygon id="wall-right" points="964,60 964,964 810,738 810,178" fill="#D5C7A7"/>
+      <polygon id="wall-bottom" points="60,964 214,738 810,738 964,964" fill="#CBBB97"/>
+    </g>
+    <rect id="wall-bottom-shade" x="0" y="0" width="1024" height="1024" fill="url(#g-bottom-wall)"/>
+    <rect id="wall-corner-shade" x="0" y="0" width="1024" height="1024" fill="url(#g-corner)"/>
+    <use id="rim-highlight" href="#outer-shape" fill="none" stroke="#FFFFFF" stroke-opacity="0.75" stroke-width="10"/>
+    <path id="rim-bottom-edge" fill-rule="evenodd" fill="#7A6A48" fill-opacity="0.35" d="M282,100 H742 A182,182 0 0 1 924,282 V742 A182,182 0 0 1 742,924 H282 A182,182 0 0 1 100,742 V282 A182,182 0 0 1 282,100 Z M282,94 H742 A182,182 0 0 1 924,276 V736 A182,182 0 0 1 742,918 H282 A182,182 0 0 1 100,736 V276 A182,182 0 0 1 282,94 Z"/>
+  </g>
+
+  <!-- 3. 윗면 -->
+  <g id="face">
+    <use href="#face-shape" fill="#F3ECDD" filter="url(#shadow-face)"/>
+    <g clip-path="url(#clip-face)">
+      <use href="#face-shape" fill="url(#g-face)"/>
+      <rect id="face-top-shade" x="198" y="162" width="628" height="120" fill="url(#g-face-top-shade)"/>
+      <rect id="face-gloss" x="637.6" y="162" width="144.4" height="592" fill="url(#g-gloss)"/>
+      <path id="face-lip-light" d="M252,167 H772 A54,54 0 0 1 826,221 V705 A54,54 0 0 1 772,759 H252 A54,54 0 0 1 198,705 V221 A54,54 0 0 1 252,167 Z" fill="none" stroke="#FFFFFF" stroke-opacity="0.9" stroke-width="8"/>
+      <path id="face-lip-dark" d="M252,157 H772 A54,54 0 0 1 826,211 V695 A54,54 0 0 1 772,749 H252 A54,54 0 0 1 198,695 V211 A54,54 0 0 1 252,157 Z" fill="none" stroke="#6A5430" stroke-opacity="0.12" stroke-width="8"/>
+    </g>
+    <use href="#face-shape" fill="none" stroke="#8A7650" stroke-opacity="0.18" stroke-width="2"/>
+  </g>
+
+  <!-- 4. 각인 ※ -->
+  <g id="mark" fill="#D23B26" filter="url(#shadow-mark)">
+    <path d="M352,298 L672,618 M352,618 L672,298" stroke="#D23B26" stroke-width="52" stroke-linecap="round" fill="none"/>
+    <circle cx="512" cy="322" r="35.2"/><circle cx="512" cy="594" r="35.2"/>
+    <circle cx="376" cy="458" r="35.2"/><circle cx="648" cy="458" r="35.2"/>
+  </g>
+
+  <!-- 5. 바깥 윤곽선 -->
+  <use id="outline" href="#outer-shape" fill="none" stroke="#000000" stroke-opacity="0.10" stroke-width="2"/>
+</svg>
