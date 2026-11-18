@@ -118,17 +118,22 @@ final class UpdateChecker {
         return false
     }
 
-    /// 릴리스 설명(마크다운)을 알림 창에 맞게: 표·링크 기호와 강조 표시를 걷어 낸다
-    private static func plainText(_ md: String) -> String {
-        md.components(separatedBy: .newlines)
-            .filter { !$0.hasPrefix("|") }
-            .map { line in
-                var s = line
-                for token in ["**", "`", "## ", "# "] { s = s.replacingOccurrences(of: token, with: "") }
-                return s
+    /// 릴리스 설명(마크다운)에서 첫 섹션(예: "바뀐 점")만 평문으로: 제목·강조·코드 표시를 떼고 링크는 글자만 남긴다.
+    /// 업데이트 방법·파일 표 같은 나머지 섹션은 알림 창 안내와 겹치므로 보여 주지 않는다.
+    static func plainText(_ md: String) -> String {
+        var lines: [String] = []
+        var seenHeading = false
+        for line in md.components(separatedBy: .newlines) {
+            if line.hasPrefix("#") {
+                if seenHeading || lines.contains(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) { break }
+                seenHeading = true
+                continue
             }
-            .joined(separator: "\n")
-            .replacingOccurrences(of: "\n\n\n", with: "\n\n")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+            if line.hasPrefix("|") { continue }
+            var s = line.replacingOccurrences(of: #"\[([^\]]*)\]\([^)]*\)"#, with: "$1", options: .regularExpression)
+            for token in ["**", "`"] { s = s.replacingOccurrences(of: token, with: "") }
+            lines.append(s)
+        }
+        return lines.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
