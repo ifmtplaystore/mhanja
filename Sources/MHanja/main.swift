@@ -3,6 +3,7 @@ import ServiceManagement
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let monitor = KeyMonitor()
+    private let updater = UpdateChecker()
     private var statusItem: NSStatusItem!
     private var permissionTimer: Timer?
     private let defaults = UserDefaults.standard
@@ -15,6 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem.button?.image = MenuBarIcon.image
         rebuildMenu()
+        updater.start()
 
         let opts = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         let trusted = AXIsProcessTrustedWithOptions(opts)
@@ -65,7 +67,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         login.state = SMAppService.mainApp.status == .enabled ? .on : .off
         menu.addItem(login)
 
+        let autoUpdate = item("자동으로 업데이트 확인", #selector(toggleAutoUpdate))
+        autoUpdate.state = updater.automatic ? .on : .off
+        menu.addItem(autoUpdate)
+
         menu.addItem(.separator())
+        menu.addItem(item("업데이트 확인…", #selector(checkForUpdates)))
         menu.addItem(item("정보…", #selector(showAbout)))
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "종료", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
@@ -103,6 +110,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSLog("로그인 항목 설정 실패: \(error)")
         }
         rebuildMenu()
+    }
+
+    @objc private func toggleAutoUpdate() {
+        updater.automatic.toggle()
+        rebuildMenu()
+    }
+
+    @objc private func checkForUpdates() {
+        updater.check(userInitiated: true)
     }
 
     @objc private func showAbout() {
