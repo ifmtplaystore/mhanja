@@ -2,6 +2,11 @@
 
 macOS 메뉴바 앱. 윈도우 한글 입력기처럼 **자음 + 트리거 키**로 특수문자를, **한글 + 트리거 키**로 한자를 입력합니다.
 
+| | 목록 | `Tab` 전체 보기 |
+|---|---|---|
+| **특수문자**<br>`ㅁ` + 트리거 키 | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/symbols-list-dark.png"><img src="docs/screenshots/symbols-list.png" alt="ㅁ 특수문자 목록" width="186"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/symbols-grid-dark.png"><img src="docs/screenshots/symbols-grid.png" alt="ㅁ 특수문자 전체 보기" width="412"></picture> |
+| **한자**<br>`한` + 트리거 키 | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/hanja-list-dark.png"><img src="docs/screenshots/hanja-list.png" alt="한 한자 목록" width="316"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/hanja-grid-dark.png"><img src="docs/screenshots/hanja-grid.png" alt="한 한자 전체 보기" width="412"></picture> |
+
 ## 사용법
 
 macOS 기본 입력기(두벌식)를 그대로 쓰면서, 글자를 입력한 직후 트리거 키(기본: 오른쪽 Option)를 눌렀다 뗍니다.
@@ -57,7 +62,8 @@ Sources/MHanja/      앱 소스
   SymbolTable.swift      자음별 특수문자 표
   TextInserter.swift     글자 바꿔 넣기, 커서 위치 찾기
 Resources/           한자 사전 데이터, 앱 아이콘
-design/              아이콘·DMG 배경 원본과 생성 코드
+design/              아이콘·DMG 배경 원본과 생성 코드, 스크린샷 생성 스크립트
+docs/screenshots/    README 스크린샷 (./design/make-screenshots.sh로 다시 만듦)
 build.sh             앱 번들·DMG 빌드
 ```
 
