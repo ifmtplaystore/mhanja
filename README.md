@@ -37,20 +37,6 @@ Apple 공증을 받지 않은 앱이라 처음 실행하면 macOS가 막습니�
 
 요구 사항: macOS 13 이상
 
-## 빌드
-
-```sh
-./build.sh          # → build/MHanja.app, build/MHanja.dmg
-```
-
-- Swift 5.9 이상 (Xcode 또는 Command Line Tools)
-- **DMG 꾸미기 (선택):** 배경 그림과 큰 아이콘 창은 [dmgbuild](https://github.com/dmgbuild/dmgbuild)로 만듭니다. 없으면 꾸미지 않은 DMG를 만듭니다.
-  ```sh
-  python3 -m venv .build/dmgbuild-venv && .build/dmgbuild-venv/bin/pip install dmgbuild
-  ```
-- **서명:** `SIGN_IDENTITY` 환경 변수 → 키체인의 `MHanja Local Signing` 인증서 → ad-hoc 순으로 고릅니다.
-  ad-hoc 서명은 빌드할 때마다 바뀌어 손쉬운 사용 권한을 다시 허용해야 하므로, 개발할 때는 코드 서명용 자체 서명 인증서(`MHanja Local Signing`)를 키체인에 만들어 두면 편합니다.
-
 ## 프로젝트 구성
 
 ```text
