@@ -1,6 +1,6 @@
 import AppKit
 
-/// 메뉴의 "정보…": 시스템 기본 정보 창에 만든이·문의처와 오픈소스 라이선스 링크를 넣어 띄운다.
+/// 메뉴의 "정보…": 시스템 기본 정보 창에 만든이·문의처·GitHub 페이지와 오픈소스 라이선스 링크를 넣어 띄운다.
 /// 앱 이름·버전·아이콘·저작권 줄은 Info.plist에서 가져온다.
 enum AboutPanel {
     static let contact = "ifmtplaystore@gmail.com"
@@ -31,6 +31,9 @@ enum AboutPanel {
         add("IFMT\n", body)
         add("문의/건의  ", bold)
         add(contact, body.merging([.link: URL(string: "mailto:\(contact)")!]) { $1 })
+        add("\n", body)
+        add("GitHub  ", bold)
+        add("github.com/\(UpdateChecker.repo)", body.merging([.link: URL(string: "https://github.com/\(UpdateChecker.repo)")!]) { $1 })
         add("\n\n", body)
 
         // BSD 3-Clause 고지 전문은 앱 번들의 hanja-LICENSE.txt에 두고, 여기서는 링크로만 연다.
