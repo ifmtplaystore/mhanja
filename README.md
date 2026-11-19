@@ -29,7 +29,14 @@ macOS 기본 입력기(두벌식)를 그대로 쓰면서, 글자를 입력한 �
 
 ## 설치
 
-[Releases](../../releases)에서 `MHanja.dmg`를 받아 열고, MHanja를 응용 프로그램 폴더로 끌어다 놓습니다.
+[Releases](../../releases)에서 Mac의 CPU에 맞는 DMG를 받아 열고, MHanja를 응용 프로그램 폴더로 끌어다 놓습니다.
+
+| Mac | 파일 |
+|---|---|
+| Apple Silicon (M1 이후) | `MHanja.dmg` |
+| Intel | `MHanja-Intel.dmg` |
+
+어느 쪽인지는  메뉴 > **이 Mac에 관하여**의 "칩"(Apple M…) 또는 "프로세서"(Intel …)로 알 수 있습니다.
 
 Apple 공증을 받지 않은 앱이라 처음 실행하면 macOS가 막습니다. 다음 순서로 한 번만 허용하면 됩니다.
 
@@ -55,7 +62,7 @@ Sources/MHanja/      앱 소스
 Resources/           한자 사전 데이터, 앱 아이콘
 design/              아이콘·DMG 배경 원본과 생성 코드, 스크린샷 생성 스크립트
 docs/screenshots/    README 스크린샷 (./design/make-screenshots.sh로 다시 만듦)
-build.sh             앱 번들·DMG 빌드
+build.sh             앱 번들·DMG 빌드 (Apple Silicon·Intel 따로)
 ```
 
 ## 라이선스

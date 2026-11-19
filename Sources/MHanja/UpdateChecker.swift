@@ -101,11 +101,21 @@ final class UpdateChecker {
               let tag = json["tag_name"] as? String,
               let page = (json["html_url"] as? String).flatMap(URL.init(string:)) else { return nil }
         let assets = json["assets"] as? [[String: Any]] ?? []
-        let dmg = assets.first { ($0["name"] as? String)?.hasSuffix(".dmg") == true }
+        let dmg = assets.first { ($0["name"] as? String).map(isDMGForThisMac) == true }
         return Release(version: tag.hasPrefix("v") ? String(tag.dropFirst()) : tag,
                        notes: json["body"] as? String ?? "",
                        pageURL: page,
                        dmgURL: (dmg?["browser_download_url"] as? String).flatMap(URL.init(string:)))
+    }
+
+    /// CPU별 DMG 중 이 앱과 같은 것: Intel은 "MHanja-Intel.dmg", Apple Silicon은 "MHanja.dmg"
+    private static func isDMGForThisMac(_ name: String) -> Bool {
+        guard name.hasSuffix(".dmg") else { return false }
+        #if arch(x86_64)
+        return name.contains("Intel")
+        #else
+        return !name.contains("Intel")
+        #endif
     }
 
     /// "1.10" > "1.9" 처럼 점으로 나눈 숫자를 차례로 비교
