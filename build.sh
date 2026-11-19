@@ -1,9 +1,10 @@
 #!/bin/zsh
 # MHanja.app·DMG 빌드: CPU별로 따로 만든다.
 #   ./build.sh          →  Apple Silicon과 Intel 둘 다
-#   ./build.sh arm64    →  Apple Silicon만 (build/arm64/MHanja.app, build/MHanja.dmg)
+#   ./build.sh arm64    →  Apple Silicon만 (build/arm64/MHanja.app, build/MHanja-AppleSilicon.dmg)
 #   ./build.sh x86_64   →  Intel만 (build/x86_64/MHanja.app, build/MHanja-Intel.dmg)
-# Apple Silicon DMG 이름을 MHanja.dmg로 두는 것은 1.4 이하의 업데이트 알림이 첫 .dmg를 받기 때문이다.
+# 1.4 이하의 업데이트 알림은 릴리스의 첫 .dmg를 받는다. GitHub는 파일을 이름순으로 주므로
+# Apple Silicon DMG 이름이 Intel보다 앞서야 한다 (AppleSilicon < Intel).
 set -e
 cd "$(dirname "$0")"
 
@@ -18,7 +19,7 @@ fi
 
 for ARCH in $ARCHS; do
 case $ARCH in
-    arm64)  DMG=build/MHanja.dmg ;;
+    arm64)  DMG=build/MHanja-AppleSilicon.dmg ;;
     x86_64) DMG=build/MHanja-Intel.dmg ;;
     *) echo "알 수 없는 아키텍처: $ARCH (arm64 또는 x86_64)"; exit 1 ;;
 esac

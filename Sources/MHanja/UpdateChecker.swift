@@ -108,7 +108,7 @@ final class UpdateChecker {
                        dmgURL: (dmg?["browser_download_url"] as? String).flatMap(URL.init(string:)))
     }
 
-    /// CPU별 DMG 중 이 앱과 같은 것: Intel은 "MHanja-Intel.dmg", Apple Silicon은 "MHanja.dmg"
+    /// CPU별 DMG 중 이 앱과 같은 것: Intel은 "MHanja-Intel.dmg", Apple Silicon은 "MHanja-AppleSilicon.dmg"
     private static func isDMGForThisMac(_ name: String) -> Bool {
         guard name.hasSuffix(".dmg") else { return false }
         #if arch(x86_64)

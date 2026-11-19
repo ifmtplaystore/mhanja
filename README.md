@@ -33,7 +33,7 @@ macOS 기본 입력기(두벌식)를 그대로 쓰면서, 글자를 입력한 �
 
 | Mac | 파일 |
 |---|---|
-| Apple Silicon (M1 이후) | `MHanja.dmg` |
+| Apple Silicon (M1 이후) | `MHanja-AppleSilicon.dmg` |
 | Intel | `MHanja-Intel.dmg` |
 
 어느 쪽인지는  메뉴 > **이 Mac에 관하여**의 "칩"(Apple M…) 또는 "프로세서"(Intel …)로 알 수 있습니다.
