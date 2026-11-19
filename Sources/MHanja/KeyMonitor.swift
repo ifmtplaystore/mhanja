@@ -1,38 +1,12 @@
 import AppKit
 import Carbon
 
-enum TriggerKey: String, CaseIterable {
-    case rightOption, rightCommand, rightControl
-
-    var keyCode: Int64 {
-        switch self {
-        case .rightOption: return 61
-        case .rightCommand: return 54
-        case .rightControl: return 62
-        }
-    }
-
-    var flag: CGEventFlags {
-        switch self {
-        case .rightOption: return .maskAlternate
-        case .rightCommand: return .maskCommand
-        case .rightControl: return .maskControl
-        }
-    }
-
-    var title: String {
-        switch self {
-        case .rightOption: return "오른쪽 Option"
-        case .rightCommand: return "오른쪽 Command"
-        case .rightControl: return "오른쪽 Control"
-        }
-    }
-}
-
 /// 전역 키 입력을 감시해 "자음/음절 + 트리거 키"를 감지한다.
 final class KeyMonitor {
     var enabled = true
-    var trigger: TriggerKey = .rightOption
+    var trigger: Trigger = .rightOption
+    /// 트리거 키 사용자 정의 창이 열려 있는 동안에는 아무것도 가로채지 않는다
+    var suspended = false
 
     private let tracker = HangulTracker()
     private let panel = CandidatePanel()
@@ -40,6 +14,7 @@ final class KeyMonitor {
     private var triggerDown = false
     private var otherKeyWhileTrigger = false
     private var keystrokesToReplace = 0
+    private var swallowedKey: Int64?   // 키 조합 트리거로 삼킨 키 (짝이 되는 keyUp·자동 반복도 삼킨다)
 
     init() {
         panel.onSelect = { [weak self] text in
@@ -50,7 +25,8 @@ final class KeyMonitor {
     }
 
     func start() -> Bool {
-        let mask = (1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.flagsChanged.rawValue)
+        let mask = (1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.keyUp.rawValue)
+            | (1 << CGEventType.flagsChanged.rawValue)
             | (1 << CGEventType.leftMouseDown.rawValue) | (1 << CGEventType.rightMouseDown.rawValue)
         guard let tap = CGEvent.tapCreate(
             tap: .cgSessionEventTap, place: .headInsertEventTap, options: .defaultTap,
@@ -77,11 +53,16 @@ final class KeyMonitor {
             if let tap { CGEvent.tapEnable(tap: tap, enable: true) }
             return pass
         }
-        if event.getIntegerValueField(.eventSourceUserData) == TextInserter.marker { return pass }
+        if suspended || event.getIntegerValueField(.eventSourceUserData) == TextInserter.marker { return pass }
 
         switch type {
         case .keyDown:
             return handleKeyDown(event)
+        case .keyUp:
+            if event.getIntegerValueField(.keyboardEventKeycode) == swallowedKey {
+                swallowedKey = nil
+                return nil
+            }
         case .flagsChanged:
             handleFlagsChanged(event)
         case .leftMouseDown, .rightMouseDown:
@@ -97,6 +78,20 @@ final class KeyMonitor {
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
         let flags = event.flags
         if triggerDown { otherKeyWhileTrigger = true }
+
+        // 키 조합 트리거: 바꿀 글자가 있을 때만 가로채고, 아니면 원래 단축키로 그대로 보낸다
+        if trigger.matches(keyCode: keyCode, flags: flags) {
+            if swallowedKey == keyCode && event.getIntegerValueField(.keyboardEventAutorepeat) != 0 { return nil }
+            if panel.isVisible {
+                panel.hide()
+                swallowedKey = keyCode
+                return nil
+            }
+            if fire() {
+                swallowedKey = keyCode
+                return nil
+            }
+        }
 
         if panel.isVisible {
             if panel.handleKey(keyCode: keyCode, shift: flags.contains(.maskShift)) { return nil }
@@ -116,11 +111,11 @@ final class KeyMonitor {
 
     private func handleFlagsChanged(_ event: CGEvent) {
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
-        guard keyCode == trigger.keyCode else {
+        guard let flag = trigger.modifierFlag, keyCode == trigger.keyCode else {
             if triggerDown { otherKeyWhileTrigger = true }
             return
         }
-        if event.flags.contains(trigger.flag) {
+        if event.flags.contains(flag) {
             triggerDown = true
             otherKeyWhileTrigger = false
         } else {
@@ -129,8 +124,10 @@ final class KeyMonitor {
         }
     }
 
-    private func fire() {
-        guard enabled, !panel.isVisible else { return }
+    /// 후보 창을 띄웠으면 true
+    @discardableResult
+    private func fire() -> Bool {
+        guard enabled, !panel.isVisible else { return false }
         let items: [Candidate]
         let expanded: [Candidate]?
         let title: String
@@ -145,10 +142,11 @@ final class KeyMonitor {
             title = "\(syllable.text) 한자"
             keystrokesToReplace = syllable.keystrokes
         } else {
-            return
+            return false
         }
-        guard !items.isEmpty else { return }
+        guard !items.isEmpty else { return false }
         panel.show(items: items, expanded: expanded, title: title, caret: TextInserter.caretRect())
+        return true
     }
 
     /// 현재 입력 소스가 두벌식 한글인지

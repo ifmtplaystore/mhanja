@@ -21,7 +21,8 @@ macOS 기본 입력기(두벌식)를 그대로 쓰면서, 글자를 입력한 �
 - `↑` `↓` 선택, `←` `→` 페이지, 숫자 `1`–`9` 바로 선택, `Enter` 입력, `Esc` 닫기
 - `Tab` 전체 보기 — 모든 문자를 격자로 펼칩니다. 한자는 기본 목록에 KS X 1001 한자만 보이고, 전체 보기에서 나머지 한자까지 보입니다.
 
-메뉴바 아이콘에서 사용 여부, 트리거 키(오른쪽 Option / Command / Control), 로그인 시 실행을 설정할 수 있습니다.
+메뉴바 아이콘에서 사용 여부, 트리거 키, 로그인 시 실행을 설정할 수 있습니다.
+트리거 키는 오른쪽 Option / Command / Control 중에서 고르거나, **사용자 정의…**에서 원하는 키를 직접 눌러 정합니다. 보조키 하나(왼쪽 Option, Fn 등)를 눌렀다 떼는 방식과 `⌃Space`·`F13` 같은 키 조합을 쓸 수 있고, macOS 키보드 단축키나 실행 중인 앱의 메뉴 단축키와 겹치면 알려 줍니다.
 새 버전이 [Releases](../../releases)에 올라오면 알려 줍니다(하루 한 번 확인, 메뉴의 **업데이트 확인…**으로 바로 확인).
 
 처음 실행하면 **시스템 설정 > 개인정보 보호 및 보안 > 손쉬운 사용**에서 MHanja를 허용해야 합니다. 키 입력 감지와 커서 위치 확인에 필요합니다.
@@ -43,6 +44,9 @@ Apple 공증을 받지 않은 앱이라 처음 실행하면 macOS가 막습니�
 ```text
 Sources/MHanja/      앱 소스
   KeyMonitor.swift       전역 키 감시, 트리거 키 감지
+  Trigger.swift          트리거 키 (보조키 단독 / 키 조합)
+  TriggerRecorder.swift  트리거 키 사용자 정의 창
+  ShortcutConflicts.swift  단축키 충돌 검사
   HangulTracker.swift    입력 중인 자음/음절 추적
   CandidatePanel.swift   후보 목록 창 (목록·격자)
   HanjaDictionary.swift  한자 사전 (기본/전체 목록, 훈 추출)

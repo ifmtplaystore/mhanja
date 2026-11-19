@@ -8,16 +8,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var permissionTimer: Timer?
     private let defaults = UserDefaults.standard
     private var running = false
+    private var triggerID = "rightOption"   // 미리 정한 키의 id 또는 "custom"
+    private var customTrigger: Trigger?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         monitor.enabled = defaults.object(forKey: "enabled") as? Bool ?? true
-        monitor.trigger = TriggerKey(rawValue: defaults.string(forKey: "trigger") ?? "") ?? .rightOption
+        triggerID = defaults.string(forKey: "trigger") ?? "rightOption"
+        customTrigger = Trigger(dictionary: defaults.dictionary(forKey: "customTrigger"))
+        applyTrigger()
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem.button?.image = MenuBarIcon.image
         rebuildMenu()
         updater.start()
-
         let opts = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         let trusted = AXIsProcessTrustedWithOptions(opts)
         NSLog("MHanja: 손쉬운 사용 권한 = \(trusted)")
@@ -53,12 +56,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(toggle)
 
         let triggerMenu = NSMenu()
-        for key in TriggerKey.allCases {
-            let it = item(key.title, #selector(selectTrigger(_:)))
-            it.representedObject = key.rawValue
-            it.state = monitor.trigger == key ? .on : .off
+        for preset in Trigger.presets {
+            let it = item(preset.trigger.title, #selector(selectTrigger(_:)))
+            it.representedObject = preset.id
+            it.state = triggerID == preset.id ? .on : .off
             triggerMenu.addItem(it)
         }
+        triggerMenu.addItem(.separator())
+        let custom = item(customTrigger.map { "사용자 정의: \($0.title)…" } ?? "사용자 정의…", #selector(customizeTrigger))
+        custom.state = triggerID == "custom" ? .on : .off
+        triggerMenu.addItem(custom)
         let triggerItem = NSMenuItem(title: "트리거 키", action: nil, keyEquivalent: "")
         triggerItem.submenu = triggerMenu
         menu.addItem(triggerItem)
@@ -93,10 +100,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func selectTrigger(_ sender: NSMenuItem) {
-        guard let raw = sender.representedObject as? String, let key = TriggerKey(rawValue: raw) else { return }
-        monitor.trigger = key
-        defaults.set(raw, forKey: "trigger")
+        guard let id = sender.representedObject as? String else { return }
+        triggerID = id
+        defaults.set(id, forKey: "trigger")
+        applyTrigger()
         rebuildMenu()
+    }
+
+    @objc private func customizeTrigger() {
+        monitor.suspended = true
+        TriggerRecorder.show(initial: customTrigger, onSave: { [weak self] trigger in
+            guard let self else { return }
+            self.customTrigger = trigger
+            self.triggerID = "custom"
+            self.defaults.set(trigger.dictionary, forKey: "customTrigger")
+            self.defaults.set("custom", forKey: "trigger")
+            self.applyTrigger()
+            self.rebuildMenu()
+        }, onClose: { [weak self] in
+            self?.monitor.suspended = false
+        })
+    }
+
+    private func applyTrigger() {
+        let preset = Trigger.presets.first { $0.id == triggerID }?.trigger
+        monitor.trigger = (triggerID == "custom" ? customTrigger : preset) ?? .rightOption
     }
 
     @objc private func toggleLogin() {
